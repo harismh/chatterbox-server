@@ -61,7 +61,6 @@ var app = {
     $.ajax({
       url: app.server,
       type: 'GET',
-      // parse server supports data key, local server does not
       data: { order: '-createdAt' },
       contentType: 'application/json',
       success: function(data) {
@@ -77,9 +76,6 @@ var app = {
 
         // Only bother updating the DOM if we have a new message
 
-        // message objects do not have objectId property
-        console.log(mostRecentMessage.objectId !== app.lastMessageId);
-        //debugger;
         if (mostRecentMessage.objectsjectId !== app.lastMessageId) {
           // Update the UI with the fetched rooms
           app.renderRoomList(data.results);
