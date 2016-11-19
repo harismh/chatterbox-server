@@ -21,7 +21,8 @@ var headers = {
 };
 
 var data = {
-  results: []
+  // hard coded one message because client code neccessitates object.length to render
+  results: [{username: 'Bob', text: 'I\'m Bob'}]
 };
 
 exports.requestHandler = function(request, response) {
@@ -47,20 +48,20 @@ exports.requestHandler = function(request, response) {
   var success = 200;
 
   if (request.url === '/classes/messages') {
-    if (request.method === 'GET') {
+    if (request.method === 'GET' || request.method === 'OPTIONS') {
       response.writeHead(success, headers);
       response.end(JSON.stringify(data));
 
     } else if (request.method === 'POST') {
       request.on('data', function(message) {
-        data.results.push(JSON.parse(message));
+        data.results.unshift(JSON.parse(message));
       });
 
       request.on('end', function() {
         response.writeHead(posted, headers);
-        response.end();
+        response.end(JSON.stringify(data));
       });
-    } 
+    }  
   } else {
     response.writeHead(404, headers);
     response.end();
