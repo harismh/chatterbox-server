@@ -56,6 +56,30 @@ describe('Node Server Request Listener Function', function() {
     expect(res._ended).to.equal(true);
   });
 
+  it('Should send an object containing a `createdAt` property', function() {
+    var req = new stubs.request('/classes/messages', 'GET');
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    var parsedBody = JSON.parse(res._data);
+    expect(parsedBody.results[0]).to.have.property('createdAt');
+    expect(parsedBody.results[0].createdAt).to.be.a('string');
+    expect(res._ended).to.equal(true);
+  });
+
+  it('Should send an object containing an `objectId` property', function() {
+    var req = new stubs.request('/classes/messages', 'GET');
+    var res = new stubs.response();
+
+    handler.requestHandler(req, res);
+
+    var parsedBody = JSON.parse(res._data);
+    expect(parsedBody.results[0]).to.have.property('objectId');
+    expect(parsedBody.results[0].objectId).to.be.a('string');
+    expect(res._ended).to.equal(true);
+  });
+
   it('Should accept posts to /classes/room', function() {
     var stubMsg = {
       username: 'Jono',
@@ -96,8 +120,8 @@ describe('Node Server Request Listener Function', function() {
     expect(res._responseCode).to.equal(200);
     var messages = JSON.parse(res._data).results;
     expect(messages.length).to.be.above(0);
-    expect(messages[0].username).to.equal('Jono');
-    expect(messages[0].message).to.equal('Do my bidding!');
+    expect(messages[1].username).to.equal('Jono');
+    expect(messages[1].message).to.equal('Do my bidding!');
     expect(res._ended).to.equal(true);
   });
 

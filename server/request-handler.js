@@ -11,6 +11,8 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+var generateId = require('./generate-random-id.js');
+var url = require('url');
 
 var headers = {
   'access-control-allow-origin': '*',
@@ -22,7 +24,7 @@ var headers = {
 
 var data = {
   // hard coded one message because client code neccessitates object.length to render
-  results: [{username: 'Bob', text: 'I\'m Bob'}]
+  results: [{username: 'Bob', text: 'I\'m Bob', createdAt: 'Mon Jan 1 1970', objectId: 'abcde'} ]
 };
 
 exports.requestHandler = function(request, response) {
@@ -47,6 +49,8 @@ exports.requestHandler = function(request, response) {
   var posted = 201;
   var success = 200;
 
+  console.log();
+
   if (request.url === '/classes/messages') {
     if (request.method === 'GET' || request.method === 'OPTIONS') {
       response.writeHead(success, headers);
@@ -54,7 +58,13 @@ exports.requestHandler = function(request, response) {
 
     } else if (request.method === 'POST') {
       request.on('data', function(message) {
-        data.results.unshift(JSON.parse(message));
+        var newMessage = JSON.parse(message);
+        //asign current date to user
+        newMessage.createdAt = JSON.stringify(new Date());
+        // assign random to user
+        newMessage.objectId = generateId.makeId();
+        //push to data object
+        data.results.push(newMessage);
       });
 
       request.on('end', function() {
@@ -62,6 +72,15 @@ exports.requestHandler = function(request, response) {
         response.end(JSON.stringify(data));
       });
     }  
+  } else if (url.parse(request.url).query === 'order=-createdAt') {
+    if (request.method === 'GET' || request.method === 'OPTIONS') {
+      var newData = {
+        results: data.results.slice().reverse()
+      };
+      response.writeHead(success, headers);
+      response.end(JSON.stringify(newData));
+
+    }
   } else {
     response.writeHead(404, headers);
     response.end();

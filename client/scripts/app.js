@@ -62,7 +62,7 @@ var app = {
       url: app.server,
       type: 'GET',
       // parse server supports data key, local server does not
-      // data: { order: '-createdAt' },
+      data: { order: '-createdAt' },
       contentType: 'application/json',
       success: function(data) {
         // Don't bother if we have nothing to work with
@@ -78,16 +78,18 @@ var app = {
         // Only bother updating the DOM if we have a new message
 
         // message objects do not have objectId property
-        // if (mostRecentMessage.objectId !== app.lastMessageId) {
+        console.log(mostRecentMessage.objectId !== app.lastMessageId);
+        //debugger;
+        if (mostRecentMessage.objectsjectId !== app.lastMessageId) {
           // Update the UI with the fetched rooms
-        app.renderRoomList(data.results);
+          app.renderRoomList(data.results);
 
           // Update the UI with the fetched messages
-        app.renderMessages(data.results, animate);
+          app.renderMessages(data.results, animate);
 
           // Store the ID of the most recent message
-        app.lastMessageId = mostRecentMessage.objectId;
-        // }
+          app.lastMessageId = mostRecentMessage.objectId;
+        }
       },
       error: function(error) {
         console.error('chatterbox: Failed to fetch messages', error);
